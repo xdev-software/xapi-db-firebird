@@ -50,7 +50,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <xdev.xapi.version>6.0.1</xdev.xapi.version>
-        <firebird.version>2.2.5</firebird.version>
+        <firebird.version>3.0.12</firebird.version>
     </properties>
 
     <repositories>
