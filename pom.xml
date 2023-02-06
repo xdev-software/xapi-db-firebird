@@ -99,7 +99,7 @@
         <!-- https://mvnrepository.com/artifact/org.firebirdsql.jdbc/jaybird -->
         <dependency>
             <groupId>org.firebirdsql.jdbc</groupId>
-            <artifactId>jaybird</artifactId>
+            <artifactId>jaybird-jdk18</artifactId>
             <version>${firebird.version}</version>
             <type>pom</type>
         </dependency>
