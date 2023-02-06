@@ -18,7 +18,7 @@
 		<connection>https://github.com/xdev-software/xapi-db-firebird.git</connection>
 	</scm>
 
-    <inceptionYear>2023</inceptionYear>
+    <inceptionYear>2003</inceptionYear>
 
     <organization>
         <name>XDEV Software</name>
