@@ -17,29 +17,6 @@
  */
 package xdev.db.firebird.jdbc;
 
-/*-
- * #%L
- * Firebird
- * %%
- * Copyright (C) 2003 - 2023 XDEV Software
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Lesser Public License for more details.
- * 
- * You should have received a copy of the GNU General Lesser Public
- * License along with this program.  If not, see
- * <http://www.gnu.org/licenses/lgpl-3.0.html>.
- * #L%
- */
-
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -68,25 +45,28 @@ import xdev.util.ProgressMonitor;
 public class FirebirdJDBCMetaData extends JDBCMetaData
 {
 	
-	private static final String	PROCEDURE_SCHEM	= "PROCEDURE_SCHEM";
-	private static final String	PROCEDURE_NAME	= "PROCEDURE_NAME";
-	private static final String	PROCEDURE_TYPE	= "PROCEDURE_TYPE";
-	private static final String	SYS				= "SYS";
-	private static final String	SQLJ			= "SQLJ";
-	private static final String	COLUMN_NAME		= "COLUMN_NAME";
-	private static final String	COLUMN_TYPE		= "COLUMN_TYPE";
-	private static final String	DATA_TYPE		= "DATA_TYPE";
-	private static final String	REMARKS			= "REMARKS";
+	private static final String PROCEDURE_SCHEM = "PROCEDURE_SCHEM";
+	private static final String PROCEDURE_NAME = "PROCEDURE_NAME";
+	private static final String PROCEDURE_TYPE = "PROCEDURE_TYPE";
+	private static final String SYS = "SYS";
+	private static final String SQLJ = "SQLJ";
+	private static final String COLUMN_NAME = "COLUMN_NAME";
+	private static final String COLUMN_TYPE = "COLUMN_TYPE";
+	private static final String DATA_TYPE = "DATA_TYPE";
+	private static final String REMARKS = "REMARKS";
 	
+	public FirebirdJDBCMetaData(FirebirdJDBCDataSource dataSource) throws DBException
+	{
+		super(dataSource);
+	}
 	
 	/**
-	 * @since 4.0 if Procedure_Type value=2, ReturnType is set to void. It is
-	 *        not as designed!
+	 * @since 4.0 if Procedure_Type value=2, ReturnType is set to void. It is not as designed!
 	 */
 	@Override
 	public StoredProcedure[] getStoredProcedures(ProgressMonitor monitor) throws DBException
 	{
-		monitor.beginTask("",ProgressMonitor.UNKNOWN);
+		monitor.beginTask("", ProgressMonitor.UNKNOWN);
 		
 		List<StoredProcedure> list = new ArrayList<>();
 		
@@ -103,11 +83,11 @@ public class FirebirdJDBCMetaData extends JDBCMetaData
 				String schema = getSchema(dataSource);
 				
 				// Stored Procedures
-				ResultSet procedures = meta.getProcedures(catalog,schema,null);
-				ResultSet procedureColumns = meta.getProcedureColumns(catalog,schema,null,null);
+				ResultSet procedures = meta.getProcedures(catalog, schema, null);
+				ResultSet procedureColumns = meta.getProcedureColumns(catalog, schema, null, null);
 				
 				Map<String, List<JDBCColumnsMetaData>> procedureColumnsMap = columnsResultSetToMap(procedureColumns);
-				addStoredProcedures(list,procedures,procedureColumnsMap);
+				addStoredProcedures(list, procedures, procedureColumnsMap);
 				procedures.close();
 				procedureColumns.close();
 			}
@@ -118,7 +98,7 @@ public class FirebirdJDBCMetaData extends JDBCMetaData
 		}
 		catch(SQLException e)
 		{
-			throw new DBException(dataSource,e);
+			throw new DBException(dataSource, e);
 		}
 		
 		monitor.done();
@@ -126,9 +106,8 @@ public class FirebirdJDBCMetaData extends JDBCMetaData
 		return list.toArray(new StoredProcedure[list.size()]);
 	}
 	
-	
 	private Map<String, List<JDBCColumnsMetaData>> columnsResultSetToMap(ResultSet resultSet)
-			throws SQLException
+		throws SQLException
 	{
 		Map<String, List<JDBCColumnsMetaData>> resultMap = new HashMap<String, List<JDBCColumnsMetaData>>();
 		while(resultSet.next())
@@ -151,30 +130,28 @@ public class FirebirdJDBCMetaData extends JDBCMetaData
 			if(resultMap.containsKey(name))
 			{
 				List<JDBCColumnsMetaData> metaDataList = resultMap.get(name);
-				JDBCColumnsMetaData metaData = new JDBCColumnsMetaData(dataType,columnType,
-						columnName);
+				JDBCColumnsMetaData metaData = new JDBCColumnsMetaData(dataType, columnType,
+					columnName);
 				
 				metaDataList.add(metaData);
-				
 			}
 			else
 			{
 				List<JDBCColumnsMetaData> metaDataList = new ArrayList<JDBCColumnsMetaData>();
-				JDBCColumnsMetaData metaData = new JDBCColumnsMetaData(dataType,columnType,
-						columnName);
+				JDBCColumnsMetaData metaData = new JDBCColumnsMetaData(dataType, columnType,
+					columnName);
 				metaDataList.add(metaData);
 				
-				resultMap.put(name,metaDataList);
+				resultMap.put(name, metaDataList);
 			}
-			
 		}
 		resultSet.close();
 		return resultMap;
 	}
 	
-	
-	private void addStoredProcedures(List<StoredProcedure> list, ResultSet resultSet,
-			Map<String, List<JDBCColumnsMetaData>> resultMap) throws SQLException
+	private void addStoredProcedures(
+		List<StoredProcedure> list, ResultSet resultSet,
+		Map<String, List<JDBCColumnsMetaData>> resultMap) throws SQLException
 	{
 		while(resultSet.next())
 		{
@@ -199,7 +176,7 @@ public class FirebirdJDBCMetaData extends JDBCMetaData
 					// versions.
 				case 2:
 					returnTypeFlavor = ReturnTypeFlavor.VOID;
-				break;
+					break;
 				
 				default:
 					returnTypeFlavor = ReturnTypeFlavor.UNKNOWN;
@@ -208,24 +185,23 @@ public class FirebirdJDBCMetaData extends JDBCMetaData
 			// search for a procedure column
 			if(resultMap.containsKey(name))
 			{
-				addStoredProceduresWithParams(list,resultMap,name,description,returnTypeFlavor,
-						returnType);
+				addStoredProceduresWithParams(list, resultMap, name, description, returnTypeFlavor,
+					returnType);
 			}
 			else
 			{
 				// add without params
-				list.add(new StoredProcedure(returnTypeFlavor,returnType,name,description,
-						new Param[0]));
+				list.add(new StoredProcedure(returnTypeFlavor, returnType, name, description
+				));
 			}
-			
 		}
 		resultSet.close();
 	}
 	
-	
-	private void addStoredProceduresWithParams(List<StoredProcedure> list,
-			Map<String, List<JDBCColumnsMetaData>> resultMap, String procName, String description,
-			ReturnTypeFlavor returnTypeFlavor, DataType returnType)
+	private void addStoredProceduresWithParams(
+		List<StoredProcedure> list,
+		Map<String, List<JDBCColumnsMetaData>> resultMap, String procName, String description,
+		ReturnTypeFlavor returnTypeFlavor, DataType returnType)
 	{
 		
 		if(procName != null)
@@ -244,70 +220,58 @@ public class FirebirdJDBCMetaData extends JDBCMetaData
 						case DatabaseMetaData.procedureColumnReturn:
 							returnTypeFlavor = ReturnTypeFlavor.TYPE;
 							returnType = jdbcColumnsMetaData.getDataType();
-						break;
+							break;
 						
 						case DatabaseMetaData.procedureColumnResult:
 							returnTypeFlavor = ReturnTypeFlavor.RESULT_SET;
-						break;
+							break;
 						
 						case DatabaseMetaData.procedureColumnIn:
-							params.add(new Param(ParamType.IN,jdbcColumnsMetaData.getColumnName(),
-									jdbcColumnsMetaData.getDataType()));
-						break;
+							params.add(new Param(ParamType.IN, jdbcColumnsMetaData.getColumnName(),
+								jdbcColumnsMetaData.getDataType()));
+							break;
 						
 						case DatabaseMetaData.procedureColumnOut:
-							params.add(new Param(ParamType.OUT,jdbcColumnsMetaData.getColumnName(),
-									jdbcColumnsMetaData.getDataType()));
-						break;
+							params.add(new Param(ParamType.OUT, jdbcColumnsMetaData.getColumnName(),
+								jdbcColumnsMetaData.getDataType()));
+							break;
 						
 						case DatabaseMetaData.procedureColumnInOut:
-							params.add(new Param(ParamType.IN_OUT,jdbcColumnsMetaData
-									.getColumnName(),jdbcColumnsMetaData.getDataType()));
-						break;
+							params.add(new Param(ParamType.IN_OUT, jdbcColumnsMetaData
+								.getColumnName(), jdbcColumnsMetaData.getDataType()));
+							break;
 					}
-					
 				}
 				else
 				{
 					returnType = jdbcColumnsMetaData.getDataType();
 				}
-				
 			}
-			list.add(new StoredProcedure(returnTypeFlavor,returnType,procName,description,params
-					.toArray(new Param[params.size()])));
+			list.add(new StoredProcedure(returnTypeFlavor, returnType, procName, description, params
+				.toArray(new Param[params.size()])));
 		}
-		
 	}
-	
-	
-	public FirebirdJDBCMetaData(FirebirdJDBCDataSource dataSource) throws DBException
-	{
-		super(dataSource);
-	}
-	
 	
 	@Override
 	protected void createTable(JDBCConnection jdbcConnection, TableMetaData table)
-			throws DBException, SQLException
+		throws DBException, SQLException
 	{
 	}
-	
 	
 	@Override
-	protected void addColumn(JDBCConnection jdbcConnection, TableMetaData table,
-			ColumnMetaData column, ColumnMetaData columnBefore, ColumnMetaData columnAfter)
-			throws DBException, SQLException
+	protected void addColumn(
+		JDBCConnection jdbcConnection, TableMetaData table,
+		ColumnMetaData column, ColumnMetaData columnBefore, ColumnMetaData columnAfter)
+		throws DBException, SQLException
 	{
-		;
 	}
-	
 	
 	@Override
-	protected void alterColumn(JDBCConnection jdbcConnection, TableMetaData table,
-			ColumnMetaData column, ColumnMetaData existing) throws DBException, SQLException
+	protected void alterColumn(
+		JDBCConnection jdbcConnection, TableMetaData table,
+		ColumnMetaData column, ColumnMetaData existing) throws DBException, SQLException
 	{
 	}
-	
 	
 	@Override
 	public boolean equalsType(ColumnMetaData clientColumn, ColumnMetaData dbColumn)
@@ -315,24 +279,22 @@ public class FirebirdJDBCMetaData extends JDBCMetaData
 		return false;
 	}
 	
-	
 	@Override
-	protected void dropColumn(JDBCConnection jdbcConnection, TableMetaData table,
-			ColumnMetaData column) throws DBException, SQLException
+	protected void dropColumn(
+		JDBCConnection jdbcConnection, TableMetaData table,
+		ColumnMetaData column) throws DBException, SQLException
 	{
 	}
-	
 	
 	@Override
 	protected void createIndex(JDBCConnection jdbcConnection, TableMetaData table, Index index)
-			throws DBException, SQLException
+		throws DBException, SQLException
 	{
 	}
 	
-	
 	@Override
 	protected void dropIndex(JDBCConnection jdbcConnection, TableMetaData table, Index index)
-			throws DBException, SQLException
+		throws DBException, SQLException
 	{
 	}
 }

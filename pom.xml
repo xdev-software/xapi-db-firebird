@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.xdev-software</groupId>
     <artifactId>xapi-db-firebird</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>SqlEngine Database Adapter Firebird</name>
-	<description>XAPI SqlEngine Database Adapter for Firebird</description>
-	<url>https://github.com/xdev-software/xapi-db-firebird</url>
+    <description>XAPI SqlEngine Database Adapter for Firebird</description>
+    <url>https://github.com/xdev-software/xapi-db-firebird</url>
 
     <scm>
-		<url>https://github.com/xdev-software/xapi-db-firebird</url>
-		<connection>https://github.com/xdev-software/xapi-db-firebird.git</connection>
-	</scm>
+        <url>https://github.com/xdev-software/xapi-db-firebird</url>
+        <connection>https://github.com/xdev-software/xapi-db-firebird.git</connection>
+    </scm>
 
     <inceptionYear>2003</inceptionYear>
 
@@ -50,7 +50,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <xdev.xapi.version>6.0.1</xdev.xapi.version>
-        <firebird.version>2.2.5</firebird.version>
+        <firebird.version>3.0.12</firebird.version>
     </properties>
 
     <repositories>
